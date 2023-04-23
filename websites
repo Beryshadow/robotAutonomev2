@@ -1,0 +1,21 @@
+Pixy cam
+https://docs.pixycam.com/wiki/doku.php?id=wiki:v2:hooking_up_pixy_to_a_microcontroller_-28like_an_arduino-29
+
+Stepper motors
+https://www.omc-stepperonline.com/nema-23-bipolar-1-8deg-1-26nm-178-4oz-in-2-8a-2-5v-57x57x56mm-4-wires-23hs22-2804s
+https://www.youtube.com/watch?v=iY_4YOlpqyI
+
+
+Accel Stepper and multistepper
+http://www.airspayce.com/mikem/arduino/AccelStepper/MultipleSteppers_8pde-example.html
+https://www.airspayce.com/mikem/arduino/AccelStepper/MultiStepper_8pde-example.html
+https://www.airspayce.com/mikem/arduino/AccelStepper/classAccelStepper.html#a73bdecf1273d98d8c5fbcb764cabeea5ac3523e4cf6763ba518d16fec3708ef23
+
+gyro
+https://community.dfrobot.com/makelog-313124.html
+https://wiki.dfrobot.com/Fermion_ICG_20660L_Accel_Gyro_6_Axis_IMU_Module_Breakout_SKU_SEN0443#target_4
+https://github.com/DFRobot/DFRobot_ICG20660L/blob/master/examples/getGyroData/getGyroData.ino
+https://github.com/DFRobot/DFRobot_ICG20660L#connected
+
+sabertooth
+https://se.inf.ethz.ch/people/wei/robots/arduino_sabertooth2x12/sabertooth.html
