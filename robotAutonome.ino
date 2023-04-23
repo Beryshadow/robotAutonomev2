@@ -80,7 +80,7 @@ Pixy2 pixy;
 
 // misc
 float ROBOTDIAMETER = 30.0; // cm
-int oldestside = 0;         // 0 left, 1 right
+int oldestSide = 0;         // 0 left, 1 right
 
 // ball struct
 struct ball
@@ -326,7 +326,7 @@ void align()
             moveInDirection(east, 10);
         }
         moveInDirection(forward, 5);
-        oldestside = 1;
+        oldestSide = 1;
     }
     else
     {
@@ -337,7 +337,7 @@ void align()
             moveInDirection(west, 10);
         }
         moveInDirection(forward, 5);
-        oldestside = 0;
+        oldestSide = 0;
     }
 }
 
