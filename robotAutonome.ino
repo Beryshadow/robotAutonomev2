@@ -118,6 +118,8 @@ void setup()
     icg.enableSensor(icg.eGyroAxisXYZ);
     icg.configGyro(icg.eFSR_G_250DPS, icg.eGyro_DLPF_8173_32KHZ);
     icg.setSampleDiv(19);
+    // magnetometer
+    // https://github.com/adafruit/Adafruit_LSM303DLH_Mag
 
     // servo
     trapDoor.attach(servoPin);
@@ -233,9 +235,11 @@ void getball()
     trapDoor.write(OPEN);
 
     // roll forward until the ball is no longer seen
+    pixy.ccc.getBlocks();
     while (pixy.ccc.numBlocks)
     {
         moveInDirection(forward, 20);
+        pixy.ccc.getBlocks();
     }
 
     // close the trap door

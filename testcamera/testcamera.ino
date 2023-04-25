@@ -9,6 +9,7 @@ void setup()
 
 void loop()
 {
+    pixy.ccc.getBlocks();
     if (pixy.ccc.numBlocks)
     {
         // print the blocks
