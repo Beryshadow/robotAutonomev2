@@ -172,7 +172,7 @@ void loop()
 void gyroTest()
 {
     // we know the gyro is aligned, so we test if its still within 1 degree of 0 else reset it
-    int angleOfRobot = getGyroData();
+    int angleOfRobot = getMagData();
     if (abs(angleOfRobot) < 1)
     {
         gyroReset();
@@ -352,7 +352,7 @@ void alignAndGyro()
 void moveInDirection(absolute_direction dir, int distance)
 {
     // get the direction of the robot
-    int angleOfRobot = getGyroData();
+    int angleOfRobot = getMagData();
     // convert to absolute direction to degrees from north
     float direction;
     if (dir == north)
@@ -397,7 +397,7 @@ void moveInDirection(absolute_direction dir, int distance)
 void moveInDirection(relative_direction dir, int distance)
 {
     // get the direction of the robot
-    int angleOfRobot = getGyroData();
+    int angleOfRobot = getMagData();
     // convert to absolute direction to degrees from north
     float direction;
     if (dir == forward)
@@ -441,7 +441,7 @@ void moveInDirection(relative_direction dir, int distance)
 
 void moveInDirection(float degrees, int distance)
 {
-    float angleOfRobot = getGyroData();
+    float angleOfRobot = getMagData();
     float direction = angleOfRobot + degrees;
     float directionWheel1 = angleOfRobot + 45.0;
     float directionWheel2 = angleOfRobot + 135.0;
@@ -488,14 +488,14 @@ void turnInDirection(float degrees)
 // absolute direction ex: 0 = north, 180 = south
 void turnToDirection(float dir)
 {
-    float angleOfRobot = getGyroData();
+    float angleOfRobot = getMagData();
     float degrees = dir - angleOfRobot;
     turnInDirection(degrees);
 }
 
 void turnInDirection(absolute_direction dir)
 {
-    float angleOfRobot = getGyroData();
+    float angleOfRobot = getMagData();
     float degrees;
     if (dir == north)
     {
@@ -516,7 +516,7 @@ void turnInDirection(absolute_direction dir)
     turnToDirection(degrees);
 }
 
-float getGyroData()
+float getMagData()
 {
     return icg.getGyroDataX();
 }

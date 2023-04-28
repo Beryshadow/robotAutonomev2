@@ -2,21 +2,21 @@
 #include <MultiStepper.h>
 #include "enums.h"
 
-#define motor1_direction 22
-#define motor1_step 23
+#define motor1_direction 26
+#define motor1_step 5
 // motor2
-#define motor2_direction 24
-#define motor2_step 25
-// motor3
-#define motor3_direction 26
-#define motor3_step 27
-// motor4
-#define motor4_direction 28
-#define motor4_step 29
+// #define motor2_direction 24
+// #define motor2_step 25
+// // motor3
+// #define motor3_direction 26
+// #define motor3_step 27
+// // motor4
+// #define motor4_direction 28
+// #define motor4_step 29
 AccelStepper motor1(AccelStepper::DRIVER, motor1_step, motor1_direction);
-AccelStepper motor2(AccelStepper::DRIVER, motor2_step, motor2_direction);
-AccelStepper motor3(AccelStepper::DRIVER, motor3_step, motor3_direction);
-AccelStepper motor4(AccelStepper::DRIVER, motor4_step, motor4_direction);
+// AccelStepper motor2(AccelStepper::DRIVER, motor2_step, motor2_direction);
+// AccelStepper motor3(AccelStepper::DRIVER, motor3_step, motor3_direction);
+// AccelStepper motor4(AccelStepper::DRIVER, motor4_step, motor4_direction);
 
 float ROBOTDIAMETER = 30.0;                             // cm
 #define stepsPerRevolution 200.0                        // in steps
@@ -27,59 +27,72 @@ const float STEPSPERCM = (wheelCircumference / stepsPerRevolution);
 long position[4] = {0, 0, 0, 0};
 
 MultiStepper steppers;
-const float MAX_SPEED = 200.0;
-const float ACCELERATION = 100.0;
+const float MAX_SPEED = 3000.0;
+const float ACCELERATION = 1000.0;
 
 void setup()
 {
     motor1.setMaxSpeed(MAX_SPEED);
     motor1.setAcceleration(ACCELERATION);
-    motor2.setMaxSpeed(MAX_SPEED);
-    motor2.setAcceleration(ACCELERATION);
-    motor3.setMaxSpeed(MAX_SPEED);
-    motor3.setAcceleration(ACCELERATION);
-    motor4.setMaxSpeed(MAX_SPEED);
-    motor4.setAcceleration(ACCELERATION);
+    // motor1.runToNewPosition(1000);
+    // motor2.setMaxSpeed(MAX_SPEED);
+    // motor2.setAcceleration(ACCELERATION);
+    // motor3.setMaxSpeed(MAX_SPEED);
+    // motor3.setAcceleration(ACCELERATION);
+    // motor4.setMaxSpeed(MAX_SPEED);
+    // motor4.setAcceleration(ACCELERATION);
 
     // Then give them to MultiStepper to manage
     steppers.addStepper(motor1);
-    steppers.addStepper(motor2);
-    steppers.addStepper(motor3);
-    steppers.addStepper(motor4);
+    // steppers.addStepper(motor2);
+    // steppers.addStepper(motor3);
+    // steppers.addStepper(motor4);
 }
-
+int pos = 10000;
 void loop()
 {
-    moveInDirection(north, 100);
-    moveInDirection(east, 100);
-    moveInDirection(south, 100);
-    moveInDirection(west, 100);
-    moveInDirection(forward, 100);
-    moveInDirection(backward, 100);
-    moveInDirection(left, 100);
-    moveInDirection(right, 100);
-    moveInDirection(0, 100);
-    moveInDirection(90, 100);
-    moveInDirection(180, 100);
-    moveInDirection(270, 100);
-    moveInDirection(45, 100);
-    moveInDirection(135, 100);
-    moveInDirection(225, 100);
-    moveInDirection(315, 100);
-    turnInDirection(east);
-    turnInDirection(south);
-    turnInDirection(west);
-    turnInDirection(north);
-    turnToDirection(90);
-    turnToDirection(180);
-    turnToDirection(270);
-    turnToDirection(0);
+    // if (motor1.distanceToGo() == 0)
+    // {
+    //     delay(500);
+    //     pos = -pos;
+    //     motor1.moveTo(pos);
+    // }
+    // // motor1.moveTo(pos);
+    // motor1.run();
+    digitalWrite(5, HIGH);
+    delayMicroseconds(400);
+    digitalWrite(5, LOW);
+    delayMicroseconds(400);
+    // moveInDirection(north, 100);
+    // moveInDirection(east, 100);
+    // moveInDirection(south, 100);
+    // moveInDirection(west, 100);
+    // moveInDirection(forward, 100);
+    // moveInDirection(backward, 100);
+    // moveInDirection(left, 100);
+    // moveInDirection(right, 100);
+    // moveInDirection(0, 100);
+    // moveInDirection(90, 100);
+    // moveInDirection(180, 100);
+    // moveInDirection(270, 100);
+    // moveInDirection(45, 100);
+    // moveInDirection(135, 100);
+    // moveInDirection(225, 100);
+    // moveInDirection(315, 100);
+    // turnInDirection(east);
+    // turnInDirection(south);
+    // turnInDirection(west);
+    // turnInDirection(north);
+    // turnToDirection(90);
+    // turnToDirection(180);
+    // turnToDirection(270);
+    // turnToDirection(0);
 }
 
 void moveInDirection(absolute_direction dir, int distance)
 {
     // get the direction of the robot
-    int angleOfRobot = getGyroData();
+    int angleOfRobot = getMagData();
     // convert to absolute direction to degrees from north
     float direction;
     if (dir == north)
@@ -124,7 +137,7 @@ void moveInDirection(absolute_direction dir, int distance)
 void moveInDirection(relative_direction dir, int distance)
 {
     // get the direction of the robot
-    int angleOfRobot = getGyroData();
+    int angleOfRobot = getMagData();
     // convert to absolute direction to degrees from north
     float direction;
     if (dir == forward)
@@ -168,7 +181,7 @@ void moveInDirection(relative_direction dir, int distance)
 
 void moveInDirection(float degrees, int distance)
 {
-    float angleOfRobot = getGyroData();
+    float angleOfRobot = getMagData();
     float direction = angleOfRobot + degrees;
     float directionWheel1 = angleOfRobot + 45.0;
     float directionWheel2 = angleOfRobot + 135.0;
@@ -215,14 +228,14 @@ void turnInDirection(float degrees)
 // absolute direction ex: 0 = north, 180 = south
 void turnToDirection(float dir)
 {
-    float angleOfRobot = getGyroData();
+    float angleOfRobot = getMagData();
     float degrees = dir - angleOfRobot;
     turnInDirection(degrees);
 }
 
 void turnInDirection(absolute_direction dir)
 {
-    float angleOfRobot = getGyroData();
+    float angleOfRobot = getMagData();
     float degrees;
     if (dir == north)
     {
@@ -243,7 +256,7 @@ void turnInDirection(absolute_direction dir)
     turnToDirection(degrees);
 }
 
-float getGyroData()
+float getMagData()
 {
     return 0;
 }
