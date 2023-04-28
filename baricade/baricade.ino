@@ -158,12 +158,16 @@ void setup()
     // pallete.write(45);
     // delay(10000);
     // pallete.write(90);
-    zeroOutMagData();
+    // zeroOutMagData();
+    moveInDirection(left, 50);
 }
 
 void loop()
 {
-
+    moveInDirection(right, 100);
+    delay(1000);
+    moveInDirection(left, 100);
+    delay(1000);
     // the only thing to do in this version is to move side to side
 
     // standby();       // the robot goes in a corner and looks for ball
@@ -442,30 +446,27 @@ void moveInDirection(absolute_direction dir, int distance)
 
 void moveInDirection(relative_direction dir, int distance)
 {
-    // get the direction of the robot
-    int angleOfRobot = getMagData();
-    // convert to absolute direction to degrees from north
+    // set the direction we want to move in relative to the robot
     float direction;
     if (dir == forward)
     {
-        direction = angleOfRobot;
+        direction = 0;
     }
     else if (dir == right)
     {
-        direction = angleOfRobot + 90.0;
+        direction = 90.0;
     }
     else if (dir == backward)
     {
-        direction = angleOfRobot + 180.0;
+        direction = 180.0;
     }
     else if (dir == left)
     {
-        direction = angleOfRobot + 270.0;
+        direction = 270.0;
     }
-    // float direction = 0.0;
 
-    float directionWheel1 = angleOfRobot + 45.0;
-    float directionWheel2 = angleOfRobot + 135.0;
+    float directionWheel1 = 45.0;
+    float directionWheel2 = 135.0;
     float weight1 = cos((direction - directionWheel1 + 90.0) * 1000 / 57296);
     float weight2 = cos((direction - directionWheel2 + 90.0) * 1000 / 57296);
 
