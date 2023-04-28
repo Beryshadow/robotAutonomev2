@@ -163,16 +163,52 @@ void loop()
 {
     // motor1.move(5000);
     // motor1.run();
-    moveInDirection(south, 2000);
-    moveInDirection(east, 2000);
-    moveInDirection(north, 2000);
-    moveInDirection(west, 2000);
+    // moveInDirection(south, 2000);
+    // moveInDirection(east, 2000);
+    // moveInDirection(north, 2000);
+    // moveInDirection(west, 2000);
 
-    // standby();       // the robot goes in a corner and looks for ball
+    standby(); // the robot goes in a corner and looks for ball
+    Serial.println("found ball");
     // getball();       // the robot seeks the oldest ball, then the next, until it dosent find one
     // alignAndShoot(); // the robot aligns itself with the goal and shoots the amount of balls it has seeked
     // alignAndGyro();  // the robot aligns itself with the the corner and makes sure the gyro is aligned (if not then it does it again)
     // testtrapdoor();
+}
+
+void standby()
+{
+    // move side to side and scan with pixycam
+    bool found = false;
+    bool left = true;
+    while (!found)
+    {
+        pixy.ccc.getBlocks();
+        if (pixy.ccc.numBlocks)
+        {
+            for (int i = 0; i < pixy.ccc.numBlocks; i++)
+            {
+                // check if their is one older than 100
+                if (pixy.ccc.blocks[i].m_age > 100)
+                {
+                    found = true;
+                    break;
+                }
+            }
+        }
+        // move side to side
+        if (!found)
+        {
+            if (left)
+            {
+                moveInDirection(left, 30);
+            }
+            else
+            {
+                moveInDirection(right, 30);
+            }
+        }
+    }
 }
 
 void testtrapdoor()
