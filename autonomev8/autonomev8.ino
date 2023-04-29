@@ -25,21 +25,20 @@ const float wheelCircumference = (PI * wheelDiameters); // in cm
 const float STEPSPERCM = (wheelCircumference / stepsPerRevolution);
 
 // disable stepper
-const int pinstepper1and2 = 50;
-const int pinstepper3and4 = 51;
+const int enable = 16;
 
 // motor1
-#define motor1_direction 26
-#define motor1_step 5
+#define motor1_direction 30
+#define motor1_step 2
 // motor2
-#define motor2_direction 27
-#define motor2_step 6
+#define motor2_direction 31
+#define motor2_step 3
 // motor3
-#define motor3_direction 28
-#define motor3_step 3
+#define motor3_direction 32
+#define motor3_step 4
 // motor4
-#define motor4_direction 29
-#define motor4_step 4
+#define motor4_direction 33
+#define motor4_step 5
 
 AccelStepper motor1(AccelStepper::DRIVER, motor1_step, motor1_direction);
 AccelStepper motor2(AccelStepper::DRIVER, motor2_step, motor2_direction);
@@ -50,8 +49,8 @@ long position[4] = {0, 0, 0, 0};
 
 MultiStepper steppers;
 
-const float MAX_SPEED = 3000.0;
-const float ACCELERATION = 1000.0;
+const float MAX_SPEED = 2000.0;
+const float ACCELERATION = 100.0;
 
 // servo
 // https://www.instructables.com/Arduino-Servo-Motors/
@@ -64,7 +63,7 @@ const int CLOSE = 40;
 // motor
 // https://forum.arduino.cc/t/sabertooth-2x12-guidance/661660
 // https://se.inf.ethz.ch/people/wei/robots/arduino_sabertooth2x12/sabertooth.html
-#define motorPin 2
+#define motorPin 6
 Servo pallete; // 45 = forward 90 = stop 135 = backward
 
 // camera
@@ -73,8 +72,8 @@ Servo pallete; // 45 = forward 90 = stop 135 = backward
 Pixy2 pixy;
 
 // buttons
-#define button1Pin 42 // side button
-#define button2Pin 44 // back button
+#define button1Pin 28 // side button
+#define button2Pin 40 // back button
 
 // misc
 float ROBOTDIAMETER = 40.0; // cm
@@ -82,6 +81,10 @@ float ROBOTDIAMETER = 40.0; // cm
 void setup()
 {
     /// init everything
+
+    // enable
+    pinMode(enable, OUTPUT);
+    digitalWrite(enable, LOW);
 
     // serial monitor
     Serial.begin(115200);
@@ -161,14 +164,36 @@ void setup()
 
 void loop()
 {
+    // move the trap door
+    // openTrapDoor();
+    // delay(5000);
+    // closeTrapDoor();
+    // delay(5000);
+    // trapDoor.write(OPEN);
+    // delay(5000);
+    // trapDoor.write(CLOSE);
+    // delay(5000);
+    Serial.println("forward");
+    moveInDirection(forward, 3000);
+    // delay(1000);
+    Serial.println("left");
+    moveInDirection(left, 3000);
+    // delay(1000);
+    Serial.println("back");
+    moveInDirection(backward, 3000);
+    // delay(1000);
+    Serial.println("right");
+    moveInDirection(right, 3000);
+    // delay(1000);
     // motor1.move(5000);
     // motor1.run();
     // moveInDirection(south, 2000);
     // moveInDirection(east, 2000);
     // moveInDirection(north, 2000);
     // moveInDirection(west, 2000);
-    Serial.print("Variable_1:");
-    Serial.println(getMagData());
+    // Serial.print("Variable_1:");
+    // Serial.println(getMagData());
+
     // standby();       // the robot goes in a corner and looks for ball
     // getball();       // the robot seeks a ball
     // alignAndShoot(); // the robot aligns itself with the goal and shoots the amount of balls it has seeked
@@ -332,7 +357,7 @@ void testtrapdoor()
     delay(1000);
 }
 
-openTrapDoor()
+void openTrapDoor()
 {
     // read the trap door
     int pos = trapDoor.read();
@@ -365,7 +390,7 @@ openTrapDoor()
     delay(15);
 }
 
-closeTrapDoor()
+void closeTrapDoor()
 {
     // read the trap door
     int pos = trapDoor.read();
@@ -424,13 +449,17 @@ void moveInDirection(absolute_direction dir, int distance)
 
     float directionWheel1 = angleOfRobot + 45.0;
     float directionWheel2 = angleOfRobot + 135.0;
+    float directionWheel3 = angleOfRobot + 225.0;
+    float directionWheel4 = angleOfRobot + 315.0;
     float weight1 = cos((direction - directionWheel1 + 90.0) * 1000 / 57296);
     float weight2 = cos((direction - directionWheel2 + 90.0) * 1000 / 57296);
+    float weight3 = sin((direction - directionWheel3 + 90.0) * 1000 / 57296);
+    float weight4 = sin((direction - directionWheel4 + 90.0) * 1000 / 57296);
 
     int stepsWheel1 = round(weight1 * distance);
     int stepsWheel2 = round(weight2 * distance);
-    int stepsWheel3 = -stepsWheel1;
-    int stepsWheel4 = -stepsWheel2;
+    int stepsWheel3 = round(weight3 * distance);
+    int stepsWheel4 = -round(weight4 * distance);
 
     // change their goals
     position[0] += stepsWheel1;
@@ -446,36 +475,47 @@ void moveInDirection(absolute_direction dir, int distance)
 void moveInDirection(relative_direction dir, int distance)
 {
     // get the direction of the robot
-    int angleOfRobot = getMagData();
     // convert to absolute direction to degrees from north
     float direction;
     if (dir == forward)
     {
-        direction = angleOfRobot;
+        direction = 0.0;
     }
     else if (dir == right)
     {
-        direction = angleOfRobot + 90.0;
+        direction = 90.0;
     }
     else if (dir == backward)
     {
-        direction = angleOfRobot + 180.0;
+        direction = 180.0;
     }
     else if (dir == left)
     {
-        direction = angleOfRobot + 270.0;
+        direction = 270.0;
     }
     // float direction = 0.0;
 
-    float directionWheel1 = angleOfRobot + 45.0;
-    float directionWheel2 = angleOfRobot + 135.0;
+    float directionWheel1 = 45.0;
+    float directionWheel2 = 135.0;
+    float directionWheel3 = 225.0;
+    float directionWheel4 = 315.0;
     float weight1 = cos((direction - directionWheel1 + 90.0) * 1000 / 57296);
     float weight2 = cos((direction - directionWheel2 + 90.0) * 1000 / 57296);
+    float weight3 = sin((direction - directionWheel3 + 90.0) * 1000 / 57296);
+    float weight4 = sin((direction - directionWheel4 + 90.0) * 1000 / 57296);
 
     int stepsWheel1 = round(weight1 * distance);
     int stepsWheel2 = round(weight2 * distance);
-    int stepsWheel3 = -stepsWheel1;
-    int stepsWheel4 = -stepsWheel2;
+    int stepsWheel3 = round(weight3 * distance);
+    int stepsWheel4 = -round(weight4 * distance);
+
+    Serial.print(stepsWheel1);
+    Serial.print(" ");
+    Serial.print(stepsWheel2);
+    Serial.print(" ");
+    Serial.print(stepsWheel3);
+    Serial.print(" ");
+    Serial.println(stepsWheel4);
 
     // change their goals
     position[0] += stepsWheel1;
@@ -494,13 +534,17 @@ void moveInDirection(float degrees, int distance)
     float direction = angleOfRobot + degrees;
     float directionWheel1 = angleOfRobot + 45.0;
     float directionWheel2 = angleOfRobot + 135.0;
+    float directionWheel3 = angleOfRobot + 225.0;
+    float directionWheel4 = angleOfRobot + 315.0;
     float weight1 = cos((direction - directionWheel1 + 90.0) * 1000 / 57296);
     float weight2 = cos((direction - directionWheel2 + 90.0) * 1000 / 57296);
+    float weight3 = sin((direction - directionWheel3 + 90.0) * 1000 / 57296);
+    float weight4 = sin((direction - directionWheel4 + 90.0) * 1000 / 57296);
 
     int stepsWheel1 = round(weight1 * distance);
     int stepsWheel2 = round(weight2 * distance);
-    int stepsWheel3 = -stepsWheel1;
-    int stepsWheel4 = -stepsWheel2;
+    int stepsWheel3 = round(weight3 * distance);
+    int stepsWheel4 = -round(weight4 * distance);
 
     // change their goals
     position[0] += stepsWheel1;
@@ -579,6 +623,7 @@ float getMagData()
         float heading = (atan2(mapfloat(event.magnetic.x, -12, 49.27, -180, 180), mapfloat(event.magnetic.z, 50, 113.91, -180, 180)) * 180) / Pi;
 
         // Normalize to 0-360
+        heading -= initialDirection;
         if (heading < 0)
         {
             heading = 360 + heading;
@@ -623,12 +668,10 @@ float mapfloat(float x, float in_min, float in_max, float out_min, float out_max
 
 void disableSteppers()
 {
-    digitalWrite(pinstepper1and2, HIGH);
-    digitalWrite(pinstepper3and4, HIGH);
+    digitalWrite(enable, HIGH);
 }
 
 void enableSteppers()
 {
-    digitalWrite(pinstepper1and2, LOW);
-    digitalWrite(pinstepper3and4, LOW);
+    digitalWrite(enable, LOW);
 }

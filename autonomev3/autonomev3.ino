@@ -11,6 +11,8 @@ court size = 609.6mm x 3733.6mm
 robot size = 45cm x 45cm
 */
 
+// #define 
+
 const int WIDTH = 45;
 const int HEIGHT = 45;
 // steppers
@@ -25,21 +27,23 @@ const float wheelCircumference = (PI * wheelDiameters); // in cm
 const float STEPSPERCM = (wheelCircumference / stepsPerRevolution);
 
 // disable stepper
-const int pinstepper1and2 = 50;
-const int pinstepper3and4 = 51;
+const int enable1 = 8;
+const int enable2 = 42;
+const int enable3 = 10;
+const int enable4 = 11;
 
 // motor1
-#define motor1_direction 26
-#define motor1_step 5
+#define motor1_direction 30
+#define motor1_step 2
 // motor2
-#define motor2_direction 27
-#define motor2_step 6
+#define motor2_direction 31
+#define motor2_step 3
 // motor3
-#define motor3_direction 28
-#define motor3_step 3
+#define motor3_direction 32
+#define motor3_step 4
 // motor4
-#define motor4_direction 29
-#define motor4_step 4
+#define motor4_direction 33
+#define motor4_step 5
 
 AccelStepper motor1(AccelStepper::DRIVER, motor1_step, motor1_direction);
 AccelStepper motor2(AccelStepper::DRIVER, motor2_step, motor2_direction);
@@ -50,8 +54,8 @@ long position[4] = {0, 0, 0, 0};
 
 MultiStepper steppers;
 
-const float MAX_SPEED = 3000.0;
-const float ACCELERATION = 1000.0;
+const float MAX_SPEED = 2000.0;
+const float ACCELERATION = 100.0;
 
 // servo
 // https://www.instructables.com/Arduino-Servo-Motors/
@@ -64,7 +68,7 @@ const int CLOSE = 40;
 // motor
 // https://forum.arduino.cc/t/sabertooth-2x12-guidance/661660
 // https://se.inf.ethz.ch/people/wei/robots/arduino_sabertooth2x12/sabertooth.html
-#define motorPin 2
+#define motorPin 6
 Servo pallete; // 45 = forward 90 = stop 135 = backward
 
 // camera
@@ -73,8 +77,8 @@ Servo pallete; // 45 = forward 90 = stop 135 = backward
 Pixy2 pixy;
 
 // buttons
-#define button1Pin 42 // side button
-#define button2Pin 44 // back button
+#define button1Pin 28 // side button
+#define button2Pin 40 // back button
 
 // misc
 float ROBOTDIAMETER = 40.0; // cm
@@ -163,10 +167,14 @@ void loop()
 {
     // motor1.move(5000);
     // motor1.run();
-    moveInDirection(south, 2000);
-    moveInDirection(east, 2000);
-    moveInDirection(north, 2000);
-    moveInDirection(west, 2000);
+    moveInDirection(forward, 12000);
+    delay(1000);
+    moveInDirection(left, 12000); 
+    delay(1000);
+    moveInDirection(backward, 12000);
+    delay(1000);
+    moveInDirection(right, 12000);
+    delay(1000);
 
     // standby();       // the robot goes in a corner and looks for ball
     // getball();       // the robot seeks the oldest ball, then the next, until it dosent find one
@@ -231,36 +239,39 @@ void moveInDirection(absolute_direction dir, int distance)
 void moveInDirection(relative_direction dir, int distance)
 {
     // get the direction of the robot
-    int angleOfRobot = getMagData();
     // convert to absolute direction to degrees from north
     float direction;
     if (dir == forward)
     {
-        direction = angleOfRobot;
+        direction = 0.0;
     }
     else if (dir == right)
     {
-        direction = angleOfRobot + 90.0;
+        direction = 90.0;
     }
     else if (dir == backward)
     {
-        direction = angleOfRobot + 180.0;
+        direction = 180.0;
     }
     else if (dir == left)
     {
-        direction = angleOfRobot + 270.0;
+        direction = 270.0;
     }
     // float direction = 0.0;
 
-    float directionWheel1 = angleOfRobot + 45.0;
-    float directionWheel2 = angleOfRobot + 135.0;
+    float directionWheel1 = 45.0;
+    float directionWheel2 = 135.0;
+    float directionWheel3 = 225.0;
+    float directionWheel4 = 315.0;
     float weight1 = cos((direction - directionWheel1 + 90.0) * 1000 / 57296);
     float weight2 = cos((direction - directionWheel2 + 90.0) * 1000 / 57296);
+    float weight3 = sin((direction - directionWheel3 + 90.0) * 1000 / 57296);
+    float weight4 = sin((direction - directionWheel4 + 90.0) * 1000 / 57296);
 
     int stepsWheel1 = round(weight1 * distance);
     int stepsWheel2 = round(weight2 * distance);
-    int stepsWheel3 = -stepsWheel1;
-    int stepsWheel4 = -stepsWheel2;
+    int stepsWheel3 = round(weight3 * distance);
+    int stepsWheel4 = -round(weight4 * distance);
 
     // change their goals
     position[0] += stepsWheel1;
