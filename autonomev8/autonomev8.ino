@@ -621,7 +621,7 @@ float getMagData()
 
         float Pi = 3.14159;
         float heading = (atan2(mapfloat(event.magnetic.x, -12, 49.27, -180, 180), mapfloat(event.magnetic.z, 50, 113.91, -180, 180)) * 180) / Pi;
-
+        heading -= initialDirection;
         // Normalize to 0-360
         heading -= initialDirection;
         if (heading < 0)
